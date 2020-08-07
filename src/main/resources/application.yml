@@ -1,0 +1,5 @@
+jwt:
+  tokenHeader: Authorization #jwt存储的请求头
+  tokenHead: Bearer #jwt中payload中拿到开头
+  secret: hello #jwt加解密使用的密钥
+  expiration: 604800 #jwt的超时时间(60 * 60 * 24)
