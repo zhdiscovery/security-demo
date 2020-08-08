@@ -3,3 +3,12 @@ jwt:
   tokenHead: Bearer #jwt中payload中拿到开头
   secret: hello #jwt加解密使用的密钥
   expiration: 604800 #jwt的超时时间(60 * 60 * 24)
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/test_mall?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/shanghai
+    username: root
+    password: 277708272
+    driver-class-name: com.mysql.cj.jdbc.Driver
+mybatis:
+  type-aliases-package: com.zh.entity
+  mapper-locations: classpath:mapper/*.xml
