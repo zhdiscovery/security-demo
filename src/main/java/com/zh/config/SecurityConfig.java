@@ -1,5 +1,9 @@
 package com.zh.config;
 
+import com.zh.dto.UmUserDetails;
+import com.zh.entity.UmPermission;
+import com.zh.entity.UmUser;
+import com.zh.service.UmUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,18 +13,21 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private UmUserService umUserService;
     @Autowired
     private CustomAccessDeniedHandler customAccessDeniedHandler;
     @Autowired
@@ -33,10 +40,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-//        manager.createUser(User.withUsername("zh").password("123").authorities("r1").build());
-        manager.createUser(User.withUsername("zh").password("$2a$10$RT3OxGiHlfO3bZ6KQzYhr.prN/XZqM5E3goEme0HoCgq9i7qmP8f2").authorities("r1").build());
-        return manager;
+        //获取登录用户信息
+        return username -> {
+            UmUser user = umUserService.getUserByUsername(username);
+            if (user != null) {
+                List<UmPermission> permissionList = umUserService.getPermissionList(user.getId());
+                return new UmUserDetails(user, permissionList);
+            }
+            throw new UsernameNotFoundException("username or password error");
+        };
     }
 
     @Override
@@ -68,7 +80,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.exceptionHandling()
                 .accessDeniedHandler(customAccessDeniedHandler)
                 .authenticationEntryPoint(customAuthenticationEntryPoint);
-
-
     }
 }

@@ -2,6 +2,8 @@ package com.zh.controller;
 
 import com.zh.common.CommonResult;
 import com.zh.common.ResultCode;
+import com.zh.entity.UmUser;
+import com.zh.service.UmUserService;
 import com.zh.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,9 +25,14 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
+    private UmUserService umUserService;
+
+    @Autowired
     private UserDetailsService userDetailsService;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -47,11 +54,12 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public CommonResult register(@RequestBody String username, @RequestBody String password) {
-        InMemoryUserDetailsManager manager = (InMemoryUserDetailsManager) userDetailsService;
-        String encode = passwordEncoder.encode(password);
-        manager.createUser(User.withUsername(username).password(encode).authorities("r2").build());
-        return CommonResult.success("ok");
+    public CommonResult register(@RequestBody UmUser umUser) {
+        UmUser register = umUserService.register(umUser);
+        if (register == null) {
+            return CommonResult.failed("username already exists");
+        }
+        return CommonResult.success(register);
     }
 
 }

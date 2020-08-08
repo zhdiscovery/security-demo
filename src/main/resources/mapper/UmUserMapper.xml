@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zh.dao.UmUserDAO">
+    <resultMap id="BaseResultMap" type="com.zh.entity.UmUser">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+        <result column="create_time" jdbcType="DATE" property="createTime"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="note" jdbcType="VARCHAR" property="note"/>
+    </resultMap>
+
+    <select id="findByUsername" parameterType="string" resultMap="BaseResultMap">
+        SELECT id,
+               username,
+               password,
+               icon,
+               email,
+               nick_name,
+               create_time,
+               login_time,
+               status,
+               note
+        FROM um_user
+        WHERE username = #{username}
+    </select>
+
+    <insert id="insert" parameterType="com.zh.entity.UmUser" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO um_user (username, password, icon, email, nick_name, create_time, login_time, status, note)
+        VALUES (#{umUser.username}, #{umUser.password}, #{umUser.icon}, #{umUser.email}, #{umUser.nickName}, #{umUser.createTime}, #{umUser.loginTime}, #{umUser.status}, #{umUser.note})
+    </insert>
+
+</mapper>

@@ -10,6 +10,10 @@ public class UmUser implements Serializable {
 
     private static final long serialVersionUID = -3144287069888790094L;
 
+    public static final Integer ENABLED = 1;//启用
+
+    public static final Integer DISABLED = 0;//禁用
+
     private Integer id;
 
     private String username;
